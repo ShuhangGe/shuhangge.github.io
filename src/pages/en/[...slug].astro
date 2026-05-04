@@ -1,0 +1,25 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import BlogPost from '../../layouts/BlogPost.astro';
+
+export async function getStaticPaths() {
+	const posts = await getCollection('blog', ({ data }) => data.lang === 'en');
+	return posts.map((post) => ({
+		params: { slug: post.id.replace(/^en\//, '') },
+		props: post,
+	}));
+}
+
+type Props = CollectionEntry<'blog'>;
+const post = Astro.props;
+const { Content } = await render(post);
+
+// Find ZH counterpart
+const zhPosts = await getCollection('blog', ({ data }) => data.lang === 'zh');
+const zhSlug = post.id.replace(/^en\//, '');
+const zhCounterpart = zhPosts.find((p) => p.id === `zh/${zhSlug}`);
+---
+
+<BlogPost {...post.data} langSwitchHref={zhCounterpart ? `/zh/${zhSlug}/` : undefined} langLabel="中文">
+	<Content />
+</BlogPost>

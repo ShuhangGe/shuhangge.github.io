@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE } from '../../consts';
+
+const posts = (await getCollection('blog', ({ data }) => data.lang === 'en'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description="Shuhang's Tech Blog" />
+		<style>
+			main { width: 720px; max-width: calc(100% - 2em); }
+			ul { list-style-type: none; padding: 0; }
+			li { margin-bottom: 2em; }
+			li a { text-decoration: none; }
+			li a:hover h4 { color: rgb(var(--accent)); }
+			.title { color: rgb(var(--black)); line-height: 1.2; }
+			.date { color: rgb(var(--gray)); font-size: 0.9em; }
+			.tags { margin-top: 0.3em; }
+			.tag { display: inline-block; background: rgb(var(--accent-light)); color: rgb(var(--accent)); padding: 0.15em 0.5em; border-radius: 4px; font-size: 0.8em; margin-right: 0.3em; }
+			.lang-switch { float: right; font-size: 0.9em; }
+			.lang-switch a { color: rgb(var(--gray)); text-decoration: none; }
+			.lang-switch a:hover { color: rgb(var(--accent)); }
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<span class="lang-switch"><a href="/zh/">中文</a></span>
+			<h1>Shuhang's Tech Blog</h1>
+			<ul>
+				{posts.map((post) => (
+					<li>
+						<a href={`/en/${post.id.replace(/^en\//, '')}/`}>
+							<h4 class="title">{post.data.title}</h4>
+							<p class="date"><FormattedDate date={post.data.pubDate} /></p>
+							{post.data.tags && (
+								<div class="tags">
+									{post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+								</div>
+							)}
+						</a>
+					</li>
+				))}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>
