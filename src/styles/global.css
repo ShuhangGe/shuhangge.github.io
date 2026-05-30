@@ -1,35 +1,35 @@
-/* Agent Architecture Blog — Linear-inspired dark theme */
+/* Agent Architecture Blog — Linear-inspired light theme */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
 	/* Background surfaces */
-	--bg-canvas: #08090a;
-	--bg-panel: #0f1011;
-	--bg-surface: #191a1b;
-	--bg-elevated: #28282c;
+	--bg-canvas: #ffffff;
+	--bg-panel: #f7f8f8;
+	--bg-surface: #f3f4f5;
+	--bg-elevated: #ebedef;
 
 	/* Text */
-	--text-primary: #f7f8f8;
-	--text-secondary: #d0d6e0;
-	--text-tertiary: #8a8f98;
-	--text-muted: #62666d;
+	--text-primary: #171717;
+	--text-secondary: #3d3f42;
+	--text-tertiary: #62666d;
+	--text-muted: #8a8f98;
 
 	/* Brand accent */
-	--accent: #7170ff;
-	--accent-hover: #828fff;
+	--accent: #5e6ad2;
+	--accent-hover: #7170ff;
 	--accent-bg: #5e6ad2;
 
 	/* Status */
 	--green: #10b981;
 
 	/* Borders */
-	--border-subtle: rgba(255, 255, 255, 0.05);
-	--border-standard: rgba(255, 255, 255, 0.08);
+	--border-subtle: rgba(0, 0, 0, 0.06);
+	--border-standard: rgba(0, 0, 0, 0.1);
 
 	/* Shadows */
-	--shadow-card: rgba(0, 0, 0, 0.2) 0px 0px 0px 1px;
-	--shadow-elevated: rgba(0, 0, 0, 0.4) 0px 2px 4px;
+	--shadow-card: rgba(0, 0, 0, 0.06) 0px 1px 3px;
+	--shadow-elevated: rgba(0, 0, 0, 0.08) 0px 2px 8px;
 
 	/* Font */
 	--font-primary: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -133,7 +133,7 @@ strong, b {
 code {
 	font-family: var(--font-mono);
 	padding: 2px 6px;
-	background: rgba(255, 255, 255, 0.06);
+	background: var(--bg-surface);
 	border-radius: 4px;
 	font-size: 0.875em;
 	color: var(--text-primary);
@@ -158,7 +158,7 @@ blockquote {
 	border-left: 3px solid var(--accent-bg);
 	padding: 0.75em 1.25em;
 	margin: 1em 0;
-	background: rgba(94, 106, 210, 0.06);
+	background: rgba(94, 106, 210, 0.05);
 	border-radius: 0 8px 8px 0;
 	color: var(--text-secondary);
 	font-size: 0.95em;
@@ -215,7 +215,7 @@ li {
 textarea, input {
 	font-family: var(--font-primary);
 	font-size: 16px;
-	background: rgba(255, 255, 255, 0.02);
+	background: var(--bg-canvas);
 	border: 1px solid var(--border-standard);
 	border-radius: 6px;
 	padding: 8px 12px;
@@ -225,11 +225,12 @@ textarea, input {
 textarea:focus, input:focus {
 	outline: none;
 	border-color: var(--accent);
+	box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.15);
 }
 
 /* Selection */
 ::selection {
-	background: rgba(113, 112, 255, 0.3);
+	background: rgba(94, 106, 210, 0.2);
 	color: var(--text-primary);
 }
 

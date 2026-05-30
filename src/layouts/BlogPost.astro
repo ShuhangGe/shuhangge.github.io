@@ -30,7 +30,8 @@ const { title, description, pubDate, updatedDate, heroImage, langSwitchHref, lan
 				display: block;
 				margin: 0 auto;
 				border-radius: 12px;
-				border: 1px solid rgba(255, 255, 255, 0.08);
+				border: 1px solid rgba(0, 0, 0, 0.08);
+				box-shadow: var(--shadow-card);
 			}
 			.prose {
 				width: 720px;
@@ -42,7 +43,7 @@ const { title, description, pubDate, updatedDate, heroImage, langSwitchHref, lan
 			.title-block {
 				margin-bottom: 2em;
 				padding: 2em 0 1.5em;
-				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+				border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 			}
 			.title-block h1 {
 				margin: 0 0 0.75em 0;
@@ -75,13 +76,13 @@ const { title, description, pubDate, updatedDate, heroImage, langSwitchHref, lan
 				text-decoration: none;
 				padding: 4px 10px;
 				border-radius: 6px;
-				border: 1px solid rgba(255, 255, 255, 0.08);
+				border: 1px solid rgba(0, 0, 0, 0.1);
 				transition: all 0.15s ease;
 			}
 			.lang-switch a:hover {
 				color: var(--text-primary);
-				border-color: rgba(255, 255, 255, 0.15);
-				background: rgba(255, 255, 255, 0.04);
+				border-color: rgba(0, 0, 0, 0.2);
+				background: rgba(0, 0, 0, 0.03);
 			}
 			.tags {
 				display: flex;
@@ -91,7 +92,7 @@ const { title, description, pubDate, updatedDate, heroImage, langSwitchHref, lan
 			}
 			.tag {
 				display: inline-block;
-				background: rgba(113, 112, 255, 0.1);
+				background: rgba(94, 106, 210, 0.08);
 				color: var(--accent);
 				padding: 3px 10px;
 				border-radius: 9999px;
@@ -155,7 +156,7 @@ const { title, description, pubDate, updatedDate, heroImage, langSwitchHref, lan
 						data-reactions-enabled="1"
 						data-emit-metadata="0"
 						data-input-position="top"
-						data-theme="dark"
+						data-theme="light"
 						data-lang={Astro.props.lang === 'zh' ? 'zh-CN' : 'en'}
 						data-loading="lazy"
 						async

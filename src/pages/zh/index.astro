@@ -23,7 +23,7 @@ const posts = (await getCollection('blog', ({ data }) => data.lang === 'zh'))
 			.page-header {
 				margin-bottom: 2.5em;
 				padding-bottom: 1.5em;
-				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+				border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 				display: flex;
 				justify-content: space-between;
 				align-items: flex-end;
@@ -40,13 +40,13 @@ const posts = (await getCollection('blog', ({ data }) => data.lang === 'zh'))
 				text-decoration: none;
 				padding: 4px 10px;
 				border-radius: 6px;
-				border: 1px solid rgba(255, 255, 255, 0.08);
+				border: 1px solid rgba(0, 0, 0, 0.1);
 				transition: all 0.15s ease;
 			}
 			.lang-switch a:hover {
 				color: var(--text-primary);
-				border-color: rgba(255, 255, 255, 0.15);
-				background: rgba(255, 255, 255, 0.04);
+				border-color: rgba(0, 0, 0, 0.2);
+				background: rgba(0, 0, 0, 0.03);
 			}
 			.post-list {
 				list-style: none;
@@ -55,7 +55,7 @@ const posts = (await getCollection('blog', ({ data }) => data.lang === 'zh'))
 			.post-item {
 				margin-bottom: 0;
 				padding: 1.25em 0;
-				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+				border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 			}
 			.post-item:first-child {
 				padding-top: 0;
@@ -88,7 +88,7 @@ const posts = (await getCollection('blog', ({ data }) => data.lang === 'zh'))
 			}
 			.tag {
 				display: inline-block;
-				background: rgba(113, 112, 255, 0.1);
+				background: rgba(94, 106, 210, 0.08);
 				color: var(--accent);
 				padding: 2px 8px;
 				border-radius: 9999px;
