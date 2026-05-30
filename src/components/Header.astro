@@ -1,19 +1,25 @@
 ---
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
+
+interface Props {
+	lang?: 'zh' | 'en';
+}
+
+const { lang = 'zh' } = Astro.props;
+const homeHref = lang === 'en' ? '/en/' : '/zh/';
 ---
 
 <header>
 	<nav>
 		<div class="nav-left">
-			<a href="/" class="logo">
+			<a href={homeHref} class="logo">
 				<span class="logo-icon">◆</span>
 				<span class="logo-text">{SITE_TITLE}</span>
 			</a>
 		</div>
 		<div class="nav-links">
-			<HeaderLink href="/">Home</HeaderLink>
-			<HeaderLink href="/blog">Blog</HeaderLink>
+			<HeaderLink href={homeHref}>Home</HeaderLink>
 			<HeaderLink href="/about">About</HeaderLink>
 		</div>
 		<div class="nav-right">

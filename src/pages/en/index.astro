@@ -6,6 +6,7 @@ import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { SITE_TITLE } from '../../consts';
 
+const lang = 'en';
 const posts = (await getCollection('blog', ({ data }) => data.lang === 'en'))
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
@@ -98,7 +99,7 @@ const posts = (await getCollection('blog', ({ data }) => data.lang === 'en'))
 		</style>
 	</head>
 	<body>
-		<Header />
+		<Header lang={lang} />
 		<main>
 			<div class="page-header">
 				<h1>Shuhang's Tech Blog</h1>
