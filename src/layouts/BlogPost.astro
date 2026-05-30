@@ -19,7 +19,7 @@ const { title, description, pubDate, updatedDate, heroImage, langSwitchHref, lan
 		<BaseHead title={title} description={description} />
 		<style>
 			main {
-				width: calc(100% - 2em);
+				width: 100%;
 				max-width: 100%;
 				margin: 0;
 			}
@@ -30,55 +30,74 @@ const { title, description, pubDate, updatedDate, heroImage, langSwitchHref, lan
 				display: block;
 				margin: 0 auto;
 				border-radius: 12px;
-				box-shadow: var(--box-shadow);
+				border: 1px solid rgba(255, 255, 255, 0.08);
 			}
 			.prose {
 				width: 720px;
 				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
+				margin: 0 auto;
+				padding: 2em 1em;
+				color: var(--text-secondary);
 			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
+			.title-block {
+				margin-bottom: 2em;
+				padding: 2em 0 1.5em;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
+			.title-block h1 {
+				margin: 0 0 0.75em 0;
+				font-size: 2.25rem;
+				font-weight: 600;
+				letter-spacing: -0.5px;
+				line-height: 1.15;
+			}
+			.meta {
+				display: flex;
+				align-items: center;
+				gap: 1em;
+				flex-wrap: wrap;
 			}
 			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
+				color: var(--text-muted);
+				font-size: 0.875rem;
+				font-weight: 400;
 			}
 			.last-updated-on {
 				font-style: italic;
+				color: var(--text-muted);
+				font-size: 0.8125rem;
 			}
 			.lang-switch {
-				text-align: right;
-				font-size: 0.9em;
-				margin-bottom: 0.5em;
+				font-size: 0.8125rem;
 			}
 			.lang-switch a {
-				color: rgb(var(--gray));
+				color: var(--text-tertiary);
 				text-decoration: none;
+				padding: 4px 10px;
+				border-radius: 6px;
+				border: 1px solid rgba(255, 255, 255, 0.08);
+				transition: all 0.15s ease;
 			}
 			.lang-switch a:hover {
-				color: rgb(var(--accent));
+				color: var(--text-primary);
+				border-color: rgba(255, 255, 255, 0.15);
+				background: rgba(255, 255, 255, 0.04);
 			}
 			.tags {
-				text-align: center;
-				margin-bottom: 1em;
+				display: flex;
+				gap: 6px;
+				flex-wrap: wrap;
+				margin-top: 1em;
 			}
 			.tag {
 				display: inline-block;
-				background: rgb(var(--accent-light));
-				color: rgb(var(--accent));
-				padding: 0.15em 0.5em;
-				border-radius: 4px;
-				font-size: 0.8em;
-				margin: 0 0.2em;
+				background: rgba(113, 112, 255, 0.1);
+				color: var(--accent);
+				padding: 3px 10px;
+				border-radius: 9999px;
+				font-size: 0.75rem;
+				font-weight: 500;
+				letter-spacing: 0.02em;
 			}
 			.giscus-container {
 				width: 720px;
@@ -102,17 +121,25 @@ const { title, description, pubDate, updatedDate, heroImage, langSwitchHref, lan
 							<a href={langSwitchHref}>{langLabel}</a>
 						</div>
 					)}
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{updatedDate && (
-								<div class="last-updated-on">
-									Last updated on <FormattedDate date={updatedDate} />
-								</div>
-							)}
-						</div>
+					<div class="title-block">
 						<h1>{title}</h1>
-						<hr />
+						<div class="meta">
+							<div class="date">
+								<FormattedDate date={pubDate} />
+								{updatedDate && (
+									<span class="last-updated-on">
+										&nbsp;· Updated <FormattedDate date={updatedDate} />
+									</span>
+								)}
+							</div>
+						</div>
+						{Astro.props.tags && (
+							<div class="tags">
+								{Astro.props.tags.map((tag: string) => (
+									<span class="tag">{tag}</span>
+								))}
+							</div>
+						)}
 					</div>
 					<slot />
 				</div>
@@ -128,7 +155,7 @@ const { title, description, pubDate, updatedDate, heroImage, langSwitchHref, lan
 						data-reactions-enabled="1"
 						data-emit-metadata="0"
 						data-input-position="top"
-						data-theme="preferred_color_scheme"
+						data-theme="dark"
 						data-lang={Astro.props.lang === 'zh' ? 'zh-CN' : 'en'}
 						data-loading="lazy"
 						async

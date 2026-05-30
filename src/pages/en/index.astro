@@ -14,31 +14,102 @@ const posts = (await getCollection('blog', ({ data }) => data.lang === 'en'))
 	<head>
 		<BaseHead title={SITE_TITLE} description="Shuhang's Tech Blog" />
 		<style>
-			main { width: 720px; max-width: calc(100% - 2em); }
-			ul { list-style-type: none; padding: 0; }
-			li { margin-bottom: 2em; }
-			li a { text-decoration: none; }
-			li a:hover h4 { color: rgb(var(--accent)); }
-			.title { color: rgb(var(--black)); line-height: 1.2; }
-			.date { color: rgb(var(--gray)); font-size: 0.9em; }
-			.tags { margin-top: 0.3em; }
-			.tag { display: inline-block; background: rgb(var(--accent-light)); color: rgb(var(--accent)); padding: 0.15em 0.5em; border-radius: 4px; font-size: 0.8em; margin-right: 0.3em; }
-			.lang-switch { float: right; font-size: 0.9em; }
-			.lang-switch a { color: rgb(var(--gray)); text-decoration: none; }
-			.lang-switch a:hover { color: rgb(var(--accent)); }
+			main {
+				width: 720px;
+				max-width: calc(100% - 2em);
+				margin: 0 auto;
+				padding: 2em 1em 4em;
+			}
+			.page-header {
+				margin-bottom: 2.5em;
+				padding-bottom: 1.5em;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-end;
+			}
+			.page-header h1 {
+				font-size: 1.75rem;
+				font-weight: 600;
+				letter-spacing: -0.3px;
+				margin: 0;
+			}
+			.lang-switch a {
+				color: var(--text-tertiary);
+				font-size: 0.8125rem;
+				text-decoration: none;
+				padding: 4px 10px;
+				border-radius: 6px;
+				border: 1px solid rgba(255, 255, 255, 0.08);
+				transition: all 0.15s ease;
+			}
+			.lang-switch a:hover {
+				color: var(--text-primary);
+				border-color: rgba(255, 255, 255, 0.15);
+				background: rgba(255, 255, 255, 0.04);
+			}
+			.post-list {
+				list-style: none;
+				padding: 0;
+			}
+			.post-item {
+				margin-bottom: 0;
+				padding: 1.25em 0;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+			}
+			.post-item:first-child {
+				padding-top: 0;
+			}
+			.post-item a {
+				text-decoration: none;
+				display: block;
+			}
+			.post-title {
+				color: var(--text-primary);
+				font-size: 1rem;
+				font-weight: 500;
+				line-height: 1.4;
+				margin: 0 0 0.35em;
+				transition: color 0.15s ease;
+			}
+			.post-item a:hover .post-title {
+				color: var(--accent);
+			}
+			.post-date {
+				color: var(--text-muted);
+				font-size: 0.8125rem;
+				margin: 0;
+			}
+			.tags {
+				display: flex;
+				gap: 6px;
+				flex-wrap: wrap;
+				margin-top: 0.5em;
+			}
+			.tag {
+				display: inline-block;
+				background: rgba(113, 112, 255, 0.1);
+				color: var(--accent);
+				padding: 2px 8px;
+				border-radius: 9999px;
+				font-size: 0.7rem;
+				font-weight: 500;
+			}
 		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<span class="lang-switch"><a href="/zh/">中文</a></span>
-			<h1>Shuhang's Tech Blog</h1>
-			<ul>
+			<div class="page-header">
+				<h1>Shuhang's Tech Blog</h1>
+				<span class="lang-switch"><a href="/zh/">中文</a></span>
+			</div>
+			<ul class="post-list">
 				{posts.map((post) => (
-					<li>
+					<li class="post-item">
 						<a href={`/en/${post.id.replace(/^en\//, '')}/`}>
-							<h4 class="title">{post.data.title}</h4>
-							<p class="date"><FormattedDate date={post.data.pubDate} /></p>
+							<h4 class="post-title">{post.data.title}</h4>
+							<p class="post-date"><FormattedDate date={post.data.pubDate} /></p>
 							{post.data.tags && (
 								<div class="tags">
 									{post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
