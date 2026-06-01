@@ -9,7 +9,7 @@ export default defineConfig({
 	site: 'https://shuhangge.github.io',
 	integrations: [mdx(), sitemap()],
 	i18n: {
-		defaultLocale: 'zh',
+		defaultLocale: 'en',
 		locales: ['zh', 'en'],
 		routing: {
 			prefixDefaultLocale: true,
