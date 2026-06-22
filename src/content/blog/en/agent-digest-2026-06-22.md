@@ -1,241 +1,251 @@
 ---
 title: "Agent Architecture Daily Digest — June 22, 2026"
-description: "Coding benchmarks called out for collapsing model+harness+environment into one score, SkillOps frames agent skill libraries as a technical-debt problem, Microsoft Foundry makes MCP the default interop layer, A2A protocol hits v1.0, Claude Code Dynamic Workflows hit stable parallelism, the June model flood continues"
+description: "Databricks open-sources Omnigent meta-harness, MCP moves to Linux Foundation, the /goal validator-loop pattern stabilizes in agentic coding, SING solves tool discovery at scale, compositional skill routing formalizes decompose-retrieve-compose, PreAct caches repeated CUA tasks, VISUALSKILL adds multimodal skills, PRPO targets Pareto-optimal tool efficiency"
 pubDate: "2026-06-22"
 lang: en
 tags: ["Agent", "LLM", "AI Architecture", "Daily Digest"]
 ---
 
-> ⚠️ **Note on today's sources:** X/Twitter "For You" collection failed this morning — the logged-in Chrome session on x.com has expired (AUTH_REQUIRED). Today's digest is therefore built from web search, arXiv search, and the Chinese-language community, with no live X items. The X feed will return once the session is re-authenticated.
-
 ## TL;DR — Today's Overview
 
-1. **Coding benchmarks are misaligned with production**: A sharp new analysis (published June 21) argues SWE-bench Verified and peers evaluate at the *agent* level but collapse model, harness, and environment into a single end-to-end score — while production teams operate at the *system* level. Vendor scores aren't comparable because scaffold, tool, and evaluator differences dominate. — Source: codex.danielvaughan.com
+> Top 10 things to know today:
 
-2. **SkillOps reframes agent skills as a software-engineering problem**: Skill libraries accumulate "skill technical debt" — library-level defects that don't break any single skill but degrade future retrieval, composition, and execution. SkillOps proposes library-time maintenance as a first-class concern, mirroring how teams maintain code dependencies. — Source: arXiv:2605.13716
+1. **Databricks open-sources Omnigent — a meta-harness above all coding agents**: Instead of picking one of Claude Code, Codex, Cursor, or custom agents, Omnigent sits above them all. You compose, govern, sandbox, and swap harnesses without rewriting orchestration code — policies survive model changes. — [@Dinosn](https://x.com/Dinosn/status/2067549695732293775)
 
-3. **Microsoft Foundry makes MCP the default integration layer**: At Build 2026, MCP is now native across Foundry, Agent 365, IQ context services, Teams SDK, and Copilot. Toolboxes (tool discovery/security), Foundry IQ (unified knowledge layer, now GA), and Hosted Agents (hypervisor-isolated compute) ship as production primitives. — Source: Microsoft Foundry Blog
+2. **SING: intention graphs solve tool discovery at scale**: As agent tool libraries grow to hundreds of APIs, finding the right tool becomes the bottleneck. SING builds an intention→tool graph that retrieves dynamically by task state, improving recall by 59.8% while cutting tool-schema context exposure by 99.8%. — [arXiv:2606.16591](https://arxiv.org/abs/2606.16591v2)
 
-4. **A2A protocol reaches v1.0 — agent-to-agent handoffs are real**: Where MCP connects a model to tools, A2A connects agents to each other. Reaching v1.0 means agent-to-agent task delegation is no longer a preview spec. A reported Q3 2026 MCP/A2A joint specification effort is underway. — Source: buildmvpfast.com, zylos.ai
+3. **Compositional Skill Routing formalizes decompose-retrieve-compose**: Real tasks need multiple skills composed, not just single-skill selection. This paper formalizes the problem class and the execution-plan composition pattern that scalable agent architectures require. — [arXiv:2606.18051](https://arxiv.org/abs/2606.18051v1)
 
-5. **Claude Code Dynamic Workflows: parallel agents are stable at 10–20**: Community testing confirms Claude Code's Dynamic Workflows handle large refactors (multi-file migration, batch test fixes) via parallel subagents, stable up to ~10–20 agents; coordination overhead rises sharply past 30. With Opus 4.8 default and fast mode, Claude Code's positioning shifts from "terminal agent" to "orchestrable engineering environment." — Source: LearnAgent (中文社区)
+4. **MCP donated to the Linux Foundation — vendor-neutral governance**: Anthropic moved the Model Context Protocol to the Agentic AI Foundation (AAIF), co-founded with Block under the Linux Foundation. MCP tools and servers will be interoperable across all providers, not just Anthropic. — [@AnthropicAI](https://x.com/AnthropicAI/status/1998437922849350141)
 
-6. **Claude now authors 80%+ of Anthropic's merged code**: Anthropic's recursive-self-improvement writeup reports that as of May 2026, over 80% of code merged into Anthropic's codebase was written by Claude — a milestone for AI-assisted development at the company building the agents. — Source: anthropic.com/institute
+5. **The `/goal` validator-loop is now a standard agentic-coding primitive**: Both Codex and Claude Code shipped a `/goal` command that runs an autonomous loop until a small validator passes. Autonomous iteration gated by verification is no longer experimental — it's productized. — [@sachinrekhi](https://x.com/sachinrekhi/status/2064013928892645786)
 
-7. **ORAgentBench: can LLM agents do operations research?**: A new benchmark (June 18) tests whether LLM agents can solve challenging OR problems requiring multi-step reasoning, tool actions, and agent-authored justification — probing the boundary of agent capability on hard optimization. — Source: arXiv:2606.19787
+6. **PreAct: computer-use agents get faster on repeated tasks**: Today's CUAs re-read screens and re-reason every action even for tasks they've done before. PreAct caches interaction trajectories and replays them, amortizing cost dramatically for recurring workflows. — [arXiv:2606.17929](https://arxiv.org/abs/2606.17929v1)
 
-8. **Chinese frontier models close the coding-agent gap**: DeepSeek V4 Pro, Kimi K2.6, and GLM-5.1 now appear on real software-engineering leaderboards — running on Claude Code as the harness base, showing the model is swappable but the harness is the moat. — Source: 搜狐 / Chinese community
+7. **PRPO targets Pareto-optimal tool-using agents**: Current RL maximizes task accuracy and ignores tool efficiency. PRPO aligns agents along both axes using dominance-based advantage estimation — directly addressing the accuracy-vs-cost trade-off every production agent hits. — [arXiv:2606.16111](https://arxiv.org/abs/2606.16111v1)
 
-9. **Latent-space parallelism for multi-agent reasoning**: A June 12 paper proposes direct latent-space synthesis for parallel branches in LLM reasoning, applied to tool-use QA and multi-agent diagnostic tasks — cutting the cost of branching by operating in latent rather than token space. — Source: arXiv:2606.14672
+8. **VISUALSKILL: text-only skills are insufficient for GUI agents**: Computer-use agents lose information when skills are text-only. VISUALSKILL represents skills with multimodal artifacts (screenshots, visual annotations), improving long-horizon task performance on unseen software. — [arXiv:2606.18448](https://arxiv.org/abs/2606.18448v1)
 
-10. **The agent-protocol stack is hardening**: Multiple 2026 analyses converge on a two-layer protocol stack — MCP (model↔tools) + A2A (agent↔agent) + emerging ACP (agent commerce/payments) — with OpenAPI schemas as the lowest-common-denominator fallback. Practitioners report the architecture has converged faster than expected. — Source: turion.ai, ruh.ai
+9. **Decoupling search from reasoning — vendor-agnostic grounding**: Native search grounding bundles retrieval policy, provider, cost, and latency behind one model boundary. This paper separates them, making grounding inspectable and portable across providers. — [arXiv:2606.18947](https://arxiv.org/abs/2606.18947v1)
 
-📊 Today's Numbers: **0 X items (auth gap) | 7 detailed papers | 8 product/company items | 6 Chinese community items | ~35 notable mentions | note: web-search-only collection**
+10. **Hermes ships Tool Search for MCP**: Instead of dumping all MCP tools into context, Hermes Agent discovers relevant tools on demand per task — reducing context bloat and improving selection accuracy. A key pattern as tool libraries scale. — [@AgenticAIFdn](https://x.com/AgenticAIFdn/article/2061490253559689322)
+
+📊 Today's Numbers: **16 X highlights | 10 detailed papers | 27 notable mentions | 8 Chinese community items | 61 total items**
 
 ---
 
-## The Pattern: The Hard Problems Moved to the System Layer
+## The Pattern: The Agent Stack Is Composting Into Layers
 
-The strongest signal across today's collection isn't a model release — it's that the conversation has decisively shifted from *"can the model do the task?"* to *"does the system around the model work in production?"*
+The strongest signal across today's collection isn't a single release — it's that the agent ecosystem is rapidly stratifying into distinct architectural layers, each with its own design problems:
 
-Three threads converge:
+- **The meta-harness layer** (Omnigent) sits above individual coding agents, making the choice of Claude Code vs Codex vs Cursor a swappable implementation detail rather than an architectural commitment.
+- **The skill/tool layer** (SING, Compositional Skill Routing, VISUALSKILL, Hermes Tool Search) is formalizing how agents discover, select, compose, and represent tools — moving from "dump everything in context" to intention-graph-driven retrieval.
+- **The protocol layer** (MCP under Linux Foundation governance) is becoming vendor-neutral infrastructure, the way HTTP became for the web.
+- **The efficiency layer** (PRPO, PreAct) is emerging because accuracy alone is no longer enough — tool-call efficiency, latency, and cost on repeated tasks are now first-class optimization targets.
 
-- **Benchmarks are finally being read at the right level.** The Vaughn analysis (Jun 21) names the core problem plainly: end-to-end agent scores collapse model + harness + environment into one number, which is useless to teams who operate, swap, and debug those layers separately. The leaderboard era is maturing into a systems-engineering discipline.
-- **Skills are becoming a managed asset class.** SkillOps names "skill technical debt" — the same decay that hits any shared code library, now applied to agent skills. This is the moment agent skills stopped being cool demos and started being software with maintenance obligations.
-- **The protocol stack crystallized.** MCP (model↔tools) and A2A (agent↔agent) are both at production maturity, with Microsoft betting its entire agent platform on MCP-as-default. The interop layer that "nobody had six months ago" is now the spine of every converged engineer stack.
-
-This is the agent operating system filling in. Models are still flooding in (GPT-5.6, Gemini 3.2, Qwen 3.7, DeepSeek V4.1 all in June) — but the architecturally interesting work is one layer up.
+This is the agent operating system filling in. The model is still the engine, but the architecturally interesting work has moved up the stack.
 
 ---
 
 ## Company Updates
 
-### Microsoft Foundry: "AI App and Agent Factory" with MCP as the Spine
+### Databricks: Omnigent — A Meta-Harness for All Coding Agents
 
-Microsoft's Build 2026 Foundry announcements are the most concrete enterprise agent-platform move this quarter. The headline framing — "AI app and agent factory" — is marketing, but the underlying primitives are real:
+The most architecturally significant release this week. [Omnigent](https://x.com/Dinosn/status/2067549695732293775) is an open-source meta-harness that orchestrates Claude Code, Codex, Cursor, Pi, and custom agents under a single governance layer. You can swap harnesses without rewriting orchestration code, enforce policies and sandboxing uniformly, and share agent configurations across teams. The key trade-off Databricks notes: context cache drops when handing off between different model backends — so cross-harness composition isn't free. But the value proposition is real: agent lock-in is a deployment risk, and a layer above individual harnesses means your policies, evals, and observability survive model swaps. ([Databricks blog, Jun 13](https://www.databricks.com/blog))
 
-- **MCP is now the default integration layer** across Foundry, Agent 365, IQ context services, Teams SDK, and Copilot. Microsoft didn't bolt MCP on; it made it native.
-- **Toolboxes** addresses tool discovery, management, and security — one of the biggest production pain points (which tools can an agent call, and how do you govern that?).
-- **Foundry IQ** is generally available as the dedicated knowledge layer behind Foundry agents, unifying Work IQ, Fabric IQ, Azure SQL, File Search, and MCP sources behind one SLA-backed retrieval endpoint.
-- **Hosted Agents** in Foundry Agent Service: hypervisor isolation, per-agent Entra ID, source-code deployment via `azd`, built-in content safety — expected GA in the coming weeks.
+### Anthropic: MCP Donated to the Linux Foundation
 
-This is the enterprise stack answer to the agent-harness problem: governed tool access, a unified retrieval layer, and isolated compute per agent. For builders, it's a strong signal that the "agent factory" pattern (design → customize → deploy → monitor at scale) is becoming a productized category.
+Anthropic [moved the Model Context Protocol](https://x.com/AnthropicAI/status/1998437922849350141) to the Agentic AI Foundation (AAIF), a directed fund under the Linux Foundation co-founded with Block. In one year, MCP went from an Anthropic internal spec to the default tool-access protocol for the agent ecosystem. Linux Foundation governance means MCP servers and tools will be interoperable across all model providers — Google, OpenAI, Mistral, and Chinese labs — not locked to Anthropic's roadmap. A reported Q3 2026 joint MCP/A2A specification effort is underway.
 
-— [Microsoft Foundry Blog](https://devblogs.microsoft.com/foundry/agent-service-build2026/) · [Build 2026 analysis: arcade.dev](https://www.arcade.dev/blog/microsoft-build-2026-agent-stack/)
+### Anthropic: Agent SDK Billing Split (June 15)
 
-### Anthropic: Claude Writes 80%+ of Its Own Codebase
+[Anthropic separated](https://x.com/unicity_labs/article/2066447178516611244) Agent SDK billing from interactive Claude.ai usage. Programmatic agent usage now bills at standard API rates rather than subscription rates. This changes the unit economics of building agents on Claude: if you're running agents at scale, cost modeling shifts from "subscription seats" to "per-token API pricing." Relevant for any team deciding whether to build on the Agent SDK vs. direct API calls.
 
-Anthropic's recursive-self-improvement writeup reports that as of May 2026, more than 80% of the code merged into Anthropic's codebase was authored by Claude. This is the most direct public datapoint on AI-assisted development velocity at a frontier lab — and it's coming from the company whose agent products (Claude Code, Cowork) are themselves the tools doing the writing.
+### Linear: Linear Agent Powered by Claude Code and Codex
 
-The implication for agent builders: the harness + skills + review-loop combination is now good enough to carry the bulk of real production code, not just prototypes. The human role is shifting to review and architecture.
+[Linear launched Linear Agent](https://x.com/linear/status/2065143120468017326), integrating agentic coding into project management workflows. Claude Code and Codex are the initial backends, with more coming. This matters as a signal: mainstream project-management tools are now embedding coding agents, moving agents from developer-only tools into everyday team workflows. When your issue tracker can directly write and review code, the feedback loop between planning and execution tightens dramatically.
 
-— [anthropic.com/institute/recursive-self-improvement](https://www.anthropic.com/institute/recursive-self-improvement)
+### Nous Research: Hermes Agent Ships Tool Search for MCP
 
-### The June 2026 Model Flood
+[Nous Research added Tool Search](https://x.com/AgenticAIFdn/article/2061490253559689322) to Hermes Agent — instead of pre-loading every available MCP tool into context, the agent discovers relevant tools on demand per task. This is the same architectural pattern that SING (below) formalizes in research: dynamic tool retrieval beats static context loading as tool libraries scale. Reducing context bloat improves both tool-selection accuracy and reasoning quality.
 
-The model layer is still churning, but the deltas are now incremental rather than paradigm-shifting:
+### Supabase: MCP Server + Agent Skills Plugin
 
-- **GPT-5.6** (OpenAI), **Gemini 3.2 / 3.5 Pro** (Google, multimodal mid-cycle refresh), **Qwen 3.7**, **DeepSeek V4.1**, and **Hunyuan** updates all landed in a ~six-week window ending mid-June.
-- Anthropic shipped two sibling lines: **Claude Fable 5** (a Mythos-class model made safe for general use) and **Claude Mythos 5** GA, plus **Opus 4.8** as the default Claude Code model with fast-mode pricing (2x rate for ~2.5x speed).
+[Supabase shipped a plugin](https://x.com/supabase/article/2063245852026777754) bundling their MCP server with agent skills — letting agents query databases, manage migrations, and deploy Edge Functions directly. Database-as-a-service companies shipping MCP-first integrations confirms MCP as the default tool interface layer for infrastructure, not just a Claude-specific convenience.
 
-The takeaway: model quality is no longer the differentiator it was. The harness, the skills, and the protocol stack matter more for outcomes than which frontier model you pick — which is exactly why the Chinese models can now compete on the *same* harness (Claude Code) and appear on real leaderboards.
+---
 
-— [Presenc AI June roundup](https://presenc.ai/research/june-2026-llm-release-roundup) · [getcreatr.com coding race](https://getcreatr.com/news/the-2026-ai-coding-race)
+## Industry Leaders
 
-### Cursor Background Agents: Autonomous PRs from a Daemon Container
+### Sachin Rekhi: The Four Stages of Agentic Coding
 
-Cursor's background-agent architecture runs on a local, process-isolated daemon container. When a developer assigns a task, the editor delegates workspace context to the daemon, which works asynchronously and opens a PR for review. GitHub Copilot's coding agent operates similarly — picking up an assigned issue, working in a GitHub Actions environment, and opening a draft PR.
+[Sachin Rekhi maps](https://x.com/sachinrekhi/status/2064013928892645786) the evolution of agentic coding through four stages, culminating in a key productization milestone: in spring 2026, both Codex and Claude Code shipped a `/goal` command that runs an autonomous "ralph loop" until a small validator passes. The validator-gated autonomous loop is becoming a standard primitive — not an experiment, but a shipped feature in the two leading coding agents. This means the pattern of "iterate until verification passes" is now accessible to every developer using these tools, not just teams building custom harnesses.
 
-This is the async-development pattern crystallizing across tools: the agent isn't a pair-programmer in your editor, it's a teammate that runs in a container and submits work for review.
+### Matt Van Horn: Every Agentic Engineering Hack (June 2026)
 
-— [businesstechnavigator.com](https://businesstechnavigator.com/news/cursor-background-agents-autonomous-pr) · [GitHub Copilot plans](https://dev.to/ssojet/6-background-ai-agents-for-async-development-2b47)
+A [practical, tested collection](https://x.com/mvanhorn/article/2061877533885473181) of workflow optimizations for daily agent-assisted development — including making every new terminal tab open directly into Claude Code, context management patterns, and tool-permission strategies. Directly actionable for builders who live in coding agents daily. The meta-insight: agentic engineering is developing its own craft knowledge, separate from traditional software engineering practices.
+
+### Aaron Levie: Enterprise Agent Deployment Is the Next Frontier
+
+[Aaron Levie notes](https://x.com/levie/status/2051344780328858040) that both Anthropic and OpenAI are launching enterprise AI agent deployment initiatives, calling it "a trend that's early but going to get very big fast." High-level observation without technical detail, but the signal matters: enterprise agent deployment — governance, security, audit trails, integration with existing IT — is where the commercial frontier is moving. Builders who solve enterprise deployment constraints (compliance, data residency, observability) will capture this market.
+
+---
+
+## Trending
+
+### Hermes Desktop: The First Agent Built Around Persistent Context
+
+[Hermes Desktop launched](https://x.com/PrajwalTomar_/status/2066195642997969255) in early June 2026, positioned as the first AI agent built around persistent context — builders no longer need to re-explain their codebase and goals every morning. This addresses a core friction: the "cold start" problem where every new agent session loses accumulated context. Whether persistent context is a feature or a product category remains to be seen, but the pain point is real — context re-establishment is a daily tax on agent-assisted workflows.
+
+### Colin Hacks: Which Coding Agent Can Dispatch Subagents Dynamically?
+
+[Colin Hacks asks](https://x.com/colinhacks/status/2067004040689647720) a pointed question: which coding agent can dispatch subagents in a truly dynamic way? His answer: "idk the answer but it's not claude, codex, or opencode." This highlights a real capability gap — current coding agents handle subagent dispatch in limited, predefined ways, but truly dynamic subagent orchestration (where the parent agent decides at runtime how to decompose and delegate based on task structure) remains unsolved by mainstream tools. The gap between "parallel subagents for known task types" and "dynamic decomposition for novel tasks" is where the next architectural leap needs to happen.
+
+---
+
+## Rising Stars
+
+### "Dive into Claude Code" Paper Recommended by Andriy Burkov
+
+[Andriy Burkov recommends](https://x.com/burkov/status/2048233381305942381) the paper "Dive into Claude Code: The Design Space of Today's and Future AI Agent Systems" (arXiv:2604.14228) — a systematic analysis of Claude Code's architecture that identifies 5 motivating human values (competence, transparency, user control, efficiency, trust) traced through 13 design principles. The most thorough academic analysis of a production agentic coding system. Open-source repo at [github.com/VILA-Lab/Dive-into-Claude-Code](https://github.com/VILA-Lab/Dive-into-Claude-Code).
+
+### Claude Architect Certification: The Blueprint Codifies Best Practices
+
+The [Claude Architect certification exam](https://x.com/sharyph_/status/2037393353478959336) blueprint defines 5 domains: 27% on agentic architecture (stop_reason loops, isolated subagent context) and 18% on tool design and MCP (keep agents to 4-5 scoped tools, not 18). The "4-5 scoped tools" rule is a concrete design guideline emerging from Anthropic's formalization of agent architecture knowledge — implying a maturing consensus on best practices.
+
+### Antigravity SDK for Agentic PR Review + Gemini CLI Shutdown
+
+[Building an agentic PR reviewer](https://x.com/RemikSamborski/article/2067690122703765510) with the Antigravity SDK, coinciding with the announced shutdown of Gemini CLI and Gemini Code Assist IDE extensions. Google's pivot away from its CLI coding agent (announced June 18, 2026) signals a strategy shift — potentially consolidating around a different interface or provider. Meanwhile, Antigravity SDK emerges as a new option for building custom review agents outside the major platform ecosystems.
+
+### Hermes MCP Servers Off by Default — Security-First Design
+
+A [daily recap notes](https://x.com/NeoAIForecast/article/2068632723674263864) that Hermes MCP servers remain off by default unless manually re-enabled via `hermes tools` or `hermes setup agent` commands. This is a deliberate security-first design choice — agents don't auto-connect to external tools without explicit opt-in. As agents gain tool access to databases, file systems, and APIs, default-off becomes the safe baseline. Builders should treat tool-enablement as an explicit, audited decision.
+
+### Nous Research × NVIDIA × Stripe: Business Agent Hackathon
+
+[Nous Research launched](https://x.com/NousResearch/status/2066921443548348436) the Hermes Agent Accelerated Business Hackathon with NVIDIA and Stripe — challenging builders to create agents that can earn, spend, and run real operations. The theme (earn/spend/run operations) defines the next frontier: agents handling real economic transactions, not just demos. When agents have wallets and can transact, the architecture problems shift from "can it complete the task?" to "can it be trusted with money?"
 
 ---
 
 ## Papers
 
-### Coding Benchmarks Are Misaligned with Production (Vaughan, Jun 21)
+### SING: Synthetic Intention Graph for Scalable Active Tool Discovery
 
-The freshest and most pointed piece in today's collection. The thesis: current benchmarks — SWE-bench Verified chief among them — evaluate at the *agent* level but collapse model, harness, and environment into one end-to-end score. In production, teams operate at the *system* level: they swap models, tune harnesses, and change environments independently, and they need signal on each. End-to-end numbers can't separate a good model from a good scaffold or evaluator, so vendor-reported scores aren't directly comparable.
+**Authors:** Qiao Xiao, Haochen Shi, Yisen Gao et al. | [arXiv:2606.16591](https://arxiv.org/abs/2606.16591v2) | June 15, 2026
 
-Why it matters: this is the benchmark maturity moment. As agent systems get built at scale, "which model scored highest on the leaderboard" stops being a useful question; "which harness+scaffold+eval combination is reliable for *my* workflow" becomes the real one. Expect system-level evaluation frameworks to emerge as a category.
+SING builds an intention-aware active tool discovery framework using a synthetic intention graph that links user intentions, tool capabilities, and collaboration patterns. It retrieves tools dynamically based on evolving task states rather than loading all tool schemas upfront. Results: Global Recall@5 improves by up to 59.8% while reducing tool-schema context exposure by 99.8%. This is directly relevant to the agent OS/tool-graph thesis — as harnesses connect to hundreds or thousands of APIs, discovering the right tool becomes the critical bottleneck, and intention-graph-driven retrieval is a fundamentally new approach.
 
-— [codex.danielvaughan.com (Jun 21)](https://codex.danielvaughan.com/2026/06/21/coding-benchmarks-misaligned-agentic-software-engineering-codex-cli-harness-feedback-loops/)
+### Compositional Skill Routing: Decompose, Retrieve, and Compose
 
-### SkillOps: Skill Libraries Get Their Own Technical-Debt Discipline
+**Authors:** Xueping Gao et al. | [arXiv:2606.18051](https://arxiv.org/abs/2606.18051v1) | June 16, 2026
 
-SkillOps (arXiv:2605.13716) names a previously underexplored failure mode: *skill technical debt* — the accumulation of library-level defects that don't break any individual skill in isolation but degrade future retrieval, composition, and execution as libraries grow. Existing skill-based agents focus on task-time retrieval, planning, and repair; SkillOps proposes library-time maintenance as a first-class concern.
+Formalizes the Compositional Skill Routing problem: given a complex query and a large skill library, decompose the query into sub-tasks, retrieve relevant skills per sub-task, and compose them into a coherent execution plan. This addresses a core gap — real tasks need multiple skills composed, not just single-skill selection. The decompose-retrieve-compose pattern is fundamental to scalable agent architectures and parallels how Hermes Agent's own skill system works.
 
-The method is a method-agnostic plug-in: it works with hierarchical skill graphs and maintains a self-growing skill ecosystem over the library's lifetime. It treats agent skills the way mature engineering teams treat shared code dependencies — versioned, tested for composition, and periodically refactored.
+### PreAct: Computer-Using Agents that Get Faster on Repeated Tasks
 
-Why it matters: as organizations accumulate hundreds of agent skills (the wshobson marketplace already lists 156+), the maintenance problem becomes real and structural. SkillOps is the first paper to formalize it. This is the "skills are software" thesis reaching its operational conclusion.
+**Author:** Bojie Li | [arXiv:2606.17929](https://arxiv.org/abs/2606.17929v1) | June 16, 2026
 
-— [arXiv:2605.13716](https://arxiv.org/abs/2605.13716) · [GitHub: Hik289/SkillOps](https://github.com/Hik289/SkillOps)
+PreAct lets computer-using agents cache and replay interaction patterns for tasks they've seen before — avoiding re-reading the screen and re-reasoning every action on repeated tasks. By caching interaction trajectories and replaying them when similar tasks recur, PreAct significantly reduces latency and cost while maintaining accuracy. A must-have optimization pattern for production CUAs, where recurring workflows (daily reports, routine data entry, repeated UI sequences) dominate actual usage.
 
-### ORAgentBench: Can LLM Agents Do Operations Research?
+### VISUALSKILL: Multimodal Skills for Computer-Use Agents
 
-ORAgentBench (arXiv:2606.19787, Jun 18) tests whether LLM agents can solve challenging operations-research problems — tasks requiring multi-step reasoning, tool actions, and agent-authored justification rather than single-shot answers. It probes the boundary of agent capability on hard optimization where correctness is verifiable but the reasoning path is long and tool-dependent.
+**Authors:** Ziyan Jiang, Li An, Yujian Liu et al. | [arXiv:2606.18448](https://arxiv.org/abs/2606.18448v1) | June 16, 2026
 
-Why it matters: OR is a domain with crisp ground truth (the optimal solution is checkable) but high reasoning complexity. It's a natural stress test for whether agent reasoning + tool use generalizes beyond coding and web tasks into quantitative decision-making. Expect this benchmark to surface where current agents break.
+Extends skill libraries for computer-use agents to include multimodal (visual) representations, since GUI interaction is inherently visual and text-only skills lose information. VISUALSKILL represents skills with screenshots, visual annotations, and UI element layouts — improving long-horizon task performance on unseen software. The key insight: text-only skill descriptions are insufficient for visual GUI tasks, and multimodal artifacts capture context that text misses.
 
-— [arXiv:2606.19787](https://arxiv.org/html/2606.19787v1)
+### PRPO: Pareto-Optimal Tool-Integrated Agents
 
-### Latent-Space Synthesis for Parallel Branches in LLM Reasoning
+**Authors:** Junyi Li, Xiaowei Qian, Yingyi Zhang et al. | [arXiv:2606.16111](https://arxiv.org/abs/2606.16111v1) | June 15, 2026
 
-A June 12 paper (arXiv:2606.14672) proposes direct latent-space synthesis for parallel branches in LLM reasoning, applied to tool-use agentic QA and multi-agent diagnostic tasks. Instead of running parallel reasoning branches in token space and merging text, the approach operates in latent space — cutting the token cost of branching and merging, which is the dominant expense in multi-branch agent workflows.
+Introduces Pareto Ranking Policy Optimization (PRPO) — a two-stage method (SFT warm-up then Pareto-ranking-based RL) that aligns tool-using agents along both task accuracy AND tool-use efficiency, rather than accuracy alone. Uses dominance-based advantage estimation to directly target the accuracy-vs-efficiency trade-off. Tool-use efficiency (fewer calls, lower latency/cost) is a core practical deployment constraint that today's RL methods ignore by maximizing only accuracy.
 
-Why it matters: parallelism is how agents explore multiple solution paths, but token-space branching is expensive. Moving branching into latent space is a concrete efficiency lever for multi-agent and tree-search-style agent architectures.
+### Decoupling Search from Reasoning: Vendor-Agnostic Grounding
 
-— [arXiv:2606.14672](https://arxiv.org/html/2606.14672)
+**Authors:** Emmanuel Aboah Boateng, Kyle MacDonald, Amardeep Kumar et al. | [arXiv:2606.18947](https://arxiv.org/abs/2606.18947v1) | June 17, 2026
 
-### PowerAgentBench-Dyn: Agents in Dynamic Power-System Workflows
+Proposes a vendor-agnostic grounding architecture that decouples retrieval policy, provider choice, evidence injection, cost, and latency from generation — making search grounding inspectable and portable. The core argument: native search grounding bundles everything behind a single model-provider boundary, preventing independent tuning. Decoupling enables teams to swap retrieval backends, audit evidence injection, and control costs without changing the model.
 
-PowerAgentBench-Dyn (arXiv:2606.20401, Jun 18) benchmarks LLM-based agents in multi-step power-system engineering workflows — interacting with software tools, interpreting intermediate results, and autonomously planning subsequent actions in a *dynamic* (changing) environment. It targets a real industrial domain where agents must adapt to shifting state, not just solve static puzzles.
+### ProvenanceGuard: Source-Aware Factuality for MCP-Based Agents
 
-Why it matters: dynamic-environment benchmarks are rarer and harder than static ones, and they expose whether an agent's planning loop holds up when the world changes under it. Power systems are a high-stakes testbed where correctness matters and tool interactions are non-trivial.
+**Authors:** Ander Alvarez, Santhiya Rajan, Samuel Mugel et al. | [arXiv:2606.18037](https://arxiv.org/abs/2606.18037v1) | June 16, 2026
 
-— [arXiv:2606.20401](https://arxiv.org/pdf/2606.20401)
+Proposes source-aware factuality verification for MCP-based agents that traces answers back to specific evidence sources (search, APIs, databases, clinical records), not just pooled evidence. Standard factuality metrics test whether answers are supported by pooled evidence but don't verify source-specific provenance. As MCP becomes the standard interface for agent tool use, provenance-aware factuality is essential for trustworthy agents — especially in high-stakes domains like clinical records.
 
-### Beyond Tokens: Latent Communication in Multi-Agent Systems
+### Automating SKILL.md Generation via Interaction Trajectory Mining
 
-A unified framework (June 2026) for latent communication in LLM-based multi-agent systems. The dominant protocol today is natural language — agents exchange messages as tokens. This work argues for latent-channel communication across reasoning, planning, and tool-use tasks, reducing the overhead of inter-agent messaging at scale.
+**Authors:** Yuexing Hao, Xiaomin Li et al. | [arXiv:2606.20363](https://arxiv.org/abs/2606.20363v1) | June 18, 2026
 
-Why it matters: as multi-agent systems grow (Microsoft Foundry already targets 200-agent scale), natural-language messaging becomes a bottleneck. Latent communication is the plumbing upgrade that makes large agent populations economical.
+A three-stage pipeline that segments GUI interaction trajectories, clusters them, and auto-generates reusable skill libraries for computer-use agents. Directly addresses whether agent skill libraries can be automatically mined from interaction data rather than hand-authored — a core scalability question. If skills can be auto-generated from observed interactions, the skill library grows organically with usage rather than requiring manual curation.
 
-— [roboticscenter.ai](https://www.roboticscenter.ai/research/papers/beyond-tokens-a-unified-framework-for-latent-communication-in-llm-based-multi-agent-system-2606)
+### OpenClaw-Skill: Collective Skill Tree Search
 
-### Agent Skills Survey: The Skill Abstraction Layer Formalized
+**Authors:** Tianyi Lin, Chuanyu Sun, Jingyi Zhang et al. | [arXiv:2606.16774](https://arxiv.org/abs/2606.16774v1) | June 15, 2026
 
-A consolidating survey (arXiv:2602.12430, updated to v3 in Feb 2026) focuses specifically on the emerging skill abstraction layer — natural-language instructions + executable code in a format agents trust — and its security implications. It covers skill architecture, acquisition, and a threat landscape where three concurrent studies (Oct 2025–Feb 2026) provide the first empirical characterization of skill-based attacks.
+A framework that automatically constructs reusable skills for LLM agents via collective skill tree search — enhancing tool use, multi-step reasoning, and dynamic environments. Rather than hand-authoring skills, the agent builds its own skill tree through search. Core to the "trainable skills" thesis in agent architecture: skills become learnable, evolvable objects, not static configuration files.
 
-Why it matters: the survey codifies "skills" as a first-class architectural object and flags that their implicit-trust execution model creates a real attack surface. As skills become standard (SkillOps, marketplaces), the security dimension will become a build-vs-buy decision.
+### VisualClaw: Real-Time Personalized Agent for the Physical World
 
-— [arXiv:2602.12430](https://arxiv.org/abs/2602.12430v3)
+**Authors:** Haoqin Tu, Jianwen Chen, Zijun Wang et al. | [arXiv:2606.16295](https://arxiv.org/abs/2606.16295v1) | June 15, 2026
 
----
-
-## Industry Leaders & Practitioner Analysis
-
-### MCP vs Skills vs Subagents: A Practitioner's Layering Guide
-
-A practical guide (fazm.ai) clarifies the three abstraction layers builders now juggle: **MCP tools** (atomic capability calls), **custom skills** (encapsulated expertise that's expensive to re-derive), and **subagent orchestration** (the highest layer, delegating whole sub-tasks to agents with their own context windows). The key insight: skills exist because re-deriving expertise from first principles every call is wasteful; subagents exist because some tasks need isolated context.
-
-Why it matters: the confusion between "should this be a tool, a skill, or a subagent?" is one of the most common architectural questions in agent design. Clear layering rules reduce over- and under-engineering.
-
-— [fazm.ai](https://fazm.ai/t/mcp-tools-skills-subagent-orchestration)
-
-### The Agent Harness Is Now a Named Concept
-
-A trends roundup (firecrawl) names the thing practitioners already feel: the *agent harness* — the software infrastructure that coordinates tool execution, memory, and state persistence across sessions — is now a recognized layer. Single-agent workflows are giving way to coordinated teams of specialized agents working in parallel, because complex tasks exceed any single context window.
-
-Why it matters: naming the harness as a distinct concern is a precursor to it becoming a productized category (which Microsoft Foundry is already doing). Builders who think explicitly about their harness — rather than letting it emerge ad hoc — build more reliable agents.
-
-— [firecrawl.dev agentic trends](https://www.firecrawl.dev/blog/agentic-ai-trends)
-
-### Claude Code Agent Memory: The Layered Architecture
-
-A deep-dive (orchestrator.dev) into Claude Code's layered memory architecture — how to engineer persistent, context-aware agents that retain what matters across sessions. This is the memory layer that turns a stateless model into something that learns over a project's lifetime.
-
-Why it matters: memory is the difference between an agent that rediscovers your codebase every session and one that builds on accumulated context. The layered approach (short-term session, persistent project memory, cross-session recall) is becoming the standard pattern.
-
-— [orchestrator.dev](https://orchestrator.dev/blog/2026-04-06--claude-code-agent-memory-2026/)
+A cascade-based VLM agent that reduces a 1-hour live-streaming session from ~3,600 API uploads to only 5-20 calls, while self-evolving its scaffold post-deployment to personalize to the user. Directly tackles two deployment bottlenecks: the cost of dense video processing and static post-deployment scaffolds. The cascade cost-reduction pattern (filter cheaply, escalate only when needed) is broadly transferable to text/tool-centric agents too.
 
 ---
 
 ## Notable Mentions
 
-**Product & Platforms**
-- GitHub Copilot coding agent picks up assigned issues, runs in GitHub Actions, opens draft PRs — the async-PR pattern is now standard across Copilot, Cursor, and Codex. ([dev.to](https://dev.to/ssojet/6-background-ai-agents-for-async-development-2b47))
-- Codex CLI is OpenAI's local terminal coding agent, open-source and Rust-based for speed; runs in VS Code, Cursor, Windsurf via IDE install. ([developers.openai.com/codex/cli](https://developers.openai.com/codex/cli))
-- wshobson/agents multi-harness marketplace: 84 plugins / 192 agents / 156 skills, with native skills + subagents (April 2026 spec). ([github.com/wshobson/agents](https://github.com/wshobson/agents))
-- Agent Toolkit for AWS ships 20+ agent skills for Claude Code / Codex / MCP-compatible agents — but load-time is a real gotcha. ([dev.to/aws](https://dev.to/aws/the-new-agent-toolkit-for-aws-includes-20-agent-skills-but-your-agent-might-never-load-them-1p6d))
-- Best AI Coding Agents June 2026 leaderboard (morphllm) scores harnesses on accuracy and cost; new Copilot paid sign-ups were paused during billing rollout. ([morphllm.com](https://www.morphllm.com/best-ai-coding-agents-2026))
-- CrewAI v1.14.6 (May 2026): 52k+ stars, ~5M monthly downloads, native MCP via `crewai-tools[mcp]` and A2A task delegation. ([morphllm.com framework guide](https://www.morphllm.com/ai-agent-framework))
+**Tool & Skill Architecture**
+- **ToolPro**: Represents agent tool intent as executable programs (with loops, conditionals, joins, retries) rather than static API endpoints — a program-as-tool-interface pattern for the agentic web. ([arXiv:2606.19992](https://arxiv.org/abs/2606.19992v1))
+- **Large Language Models Do Not Always Need Readable Language**: Investigates whether LLMs can use compact, non-human-readable encodings for model-to-model communication, potentially reducing token overhead in multi-agent pipelines. ([arXiv:2606.19857](https://arxiv.org/abs/2606.19857v1))
+- **SafeClawBench**: Separates three harm stages in tool-using agents — semantic (unsafe text), audit-evidence (provenance), and sandbox (actual tool effects like writing memory or modifying databases). ([arXiv:2606.18356](https://arxiv.org/abs/2606.18356v1))
 
-**Protocols & Standards**
-- MCP 2026 roadmap: stateless transport, server discovery, tasks, enterprise auth, triggers, streaming, skills, extensions, SDK v2. ([tedt.org](https://tedt.org/MCPs-2026-Roadmap/))
-- A2A reached v1.0 — agent-to-agent handoffs are no longer a preview spec. ([buildmvpfast.com](https://www.buildmvpfast.com/blog/ai-engineer-stack-2026-mcp-a2a-protocol))
-- Reported Q3 2026 MCP/A2A joint specification effort underway; convergence likely runs through NIST standards and W3C DID infrastructure. ([zylos.ai](https://zylos.ai/research/2026-03-26-agent-interoperability-protocols-mcp-a2a-acp-convergence/))
-- Two-layer protocol stack (MCP + A2A + emerging ACP for agent commerce) is the converged 2026 engineer stack. ([turion.ai](https://turion.ai/blog/ai-agent-protocol-stack-2026/))
+**Multi-Agent Systems**
+- **Contagion Networks**: Formal framework measuring how evaluator biases propagate through multi-agent LLM systems — biased evaluators contaminate the entire reasoning chain. ([arXiv:2606.20493](https://arxiv.org/abs/2606.20493v1))
+- **On the Reliability of Networks of AI Agents**: Applies density evolution and stopping set analysis (from coding theory) to understand when networks of imperfect agents succeed or fail at combining solutions. ([arXiv:2606.18121](https://arxiv.org/abs/2606.18121v1))
+- **AdaSTORM**: Adaptive spatio-temporal multi-agent collaboration to overcome the scaling bottleneck of LLM reasoning on dynamic graphs. ([arXiv:2606.16328](https://arxiv.org/abs/2606.16328v1))
+- **Multi-Agent Multi-Objective Optimization**: A multi-agent system for cost-minimization under performance constraints in dynamic environments using RL. ([arXiv:2606.20236](https://arxiv.org/abs/2606.20236v1))
+- **Hierarchical Control in Multi-Agent Games**: LLM-based planning combined with RL execution for complex multi-agent game environments — the planner/executor split pattern. ([arXiv:2606.20014](https://arxiv.org/abs/2606.20014v1))
 
-**Research & Benchmarks**
-- SWE-bench Verified progress curve: 1.96% (Claude 2, 2023) to >80% in vendor-reported late-2025/early-2026 — but scores aren't comparable across vendors due to scaffold/tool/evaluator differences. ([thenewspaperdaily.com](https://thenewspaperdaily.com/top-7-benchmarks-that-actually-matter-for-agentic-reasoning-in-large-language-models/))
-- "Every major agent benchmark just got hacked" — a skeptical read arguing leaderboards function as a de facto trust layer that's now strained. ([LinkedIn](https://www.linkedin.com/pulse/every-major-agent-benchmark-just-got-hacked-heres-what-kanis-patel-gl3yc))
-- ForeSci (arXiv:2606.00644): evaluates LLM agents on forward-looking AI research planning tasks. ([arXiv](https://arxiv.org/html/2606.00644v2))
-- Can LLM agents sustain long-horizon organizational dynamics? (arXiv:2606.01199) — simulating agent populations in organizational settings. ([arXiv](https://arxiv.org/html/2606.01199v1))
-- SeClaw (arXiv:2606.02302): spec-driven security task synthesis for evaluating agent security across planning, memory, tool-use, and execution. ([arXiv](https://arxiv.org/html/2606.02302v1))
-- The Evolution of Tool Use in LLM Agents (arXiv:2603.22862): from single-tool call to multi-tool orchestration, with memory-tool integration as the mainstream trend. ([arXiv](https://arxiv.org/html/2603.22862v2))
+**Evaluation & Benchmarks**
+- **Beyond Static Leaderboards**: Aggregates 14 parallel implementation studies of an MCP-based industrial agent benchmark — finding no single benchmark covers more than 4-5 deployment dimensions. Predictive validity across benchmarks is limited. ([arXiv:2606.19704](https://arxiv.org/abs/2606.19704v1))
+- **How Inference Compute Shapes Frontier LLM Evaluation**: Shows evaluation results are increasingly sensitive to inference compute allocation, yet many evaluations don't control for it — making cross-system comparisons unreliable. ([arXiv:2606.17930](https://arxiv.org/abs/2606.17930v1))
+- **Black-Box Uncertainty Estimation for LLMs**: Systematically evaluates uncertainty estimation methods accessible via API only — essential for trustworthy agent systems in the practical black-box setting. ([arXiv:2606.19868](https://arxiv.org/abs/2606.19868v1))
+- **LabOSBench**: Benchmark of web-based scientific-instrument simulators for evaluating computer-use agents on tasks with hard procedural ordering and feedback-driven parameter adjustment. ([arXiv:2606.16802](https://arxiv.org/abs/2606.16802v1))
 
-**Engineering Practice**
-- Claude Code guide: 25 features including subagents, hooks, MCP, and Auto Mode with examples. ([marktechpost.com](https://www.marktechpost.com/2026/06/14/claude-code-guide-2026-25-features-with-examples-demo/))
-- fast-agent: Python LLM agent framework with SKILL.md system, MCP OAuth/PKCE, deployable as MCP server or ACP agent. ([everydev.ai](https://www.everydev.ai/tools/fast-agent))
-- Customizing agents: the five levers — rules, skills, agent modes, MCP, AgentIgnore; `AGENTS.md` as the project source-of-truth. ([habr.com](https://habr.com/ru/companies/veai/articles/1031992/))
-- AI agent stack selection in 2026: frontier closed-source providers dominate production; the harness is the differentiator. ([thenuancedperspective.substack.com](https://thenuancedperspective.substack.com/p/how-to-choose-your-ai-agent-stack))
+**Domain-Specific Agent Applications**
+- **AgentFinVQA**: Deployable multi-agent pipeline for auditable financial chart QA with built-in audit trails and on-premise deployment patterns. ([arXiv:2606.19782](https://arxiv.org/abs/2606.19782v1))
+- **Guava**: Harness-based approach to embodied manipulation combining LLM reasoning with external perception/action modules — an alternative to end-to-end VLA. ([arXiv:2606.18363](https://arxiv.org/abs/2606.18363v1))
+- **Zero-Shot Dexterous Manipulation**: Uses VLM reasoning with multi-view RGB to produce 3D task plans without training end-to-end policies. ([arXiv:2606.19340](https://arxiv.org/abs/2606.19340v1))
+- **AI-Assisted Scientific Workflow Management**: Uses LLMs to automate workflow design, implementation, and debugging in scientific WMS. ([arXiv:2606.18425](https://arxiv.org/abs/2606.18425v1))
+- **LectūraAgents**: Multi-agent framework for adaptive personalized AI-assisted learning. ([arXiv:2606.16428](https://arxiv.org/abs/2606.16428v1))
+- **PowerAgentBench-SS**: Benchmarks whether LLM agents can execute engineering workflows in power systems. ([arXiv:2606.18789](https://arxiv.org/abs/2606.18789v1))
+- **GeoDisaster**: Benchmarks orchestrated agents on tool-grounded spatial reasoning for disaster geo-intelligence. ([arXiv:2606.17246](https://arxiv.org/abs/2606.17246v1))
 
-**Geopolitics & Industry**
-- Huawei is transforming HarmonyOS into an AI-native OS where agents live in the system layer, not as standalone apps. ([peerlist.io](https://peerlist.io/cnyouzige/articles/ai-agents-news--june-2026-openai-robotics-huawei-harmonyos-a))
-- OpenAI's newly established robotics division signals a push toward embodied intelligence and real-world deployment. ([peerlist.io](https://peerlist.io/cnyouzige/articles/ai-agents-news--june-2026-openai-robotics-huawei-harmonyos-a))
-- Anthropic's reported IPO preparations and $965B valuation highlight the lab-to-public-company transition. ([kersai.com](https://kersai.com/june-2026-ai-news-anthropic-spacex-google-business-impact/))
-- AI governance talks: executives from Anthropic, OpenAI, and Google engaged with governments on infrastructure and governance. ([marketingprofs.com](https://www.marketingprofs.com/opinions/2026/55065/ai-update-june-19-2026-ai-news-and-views-from-the-past-week))
+**Governance & Safety**
+- **Architectural Wisdom**: Framework arguing AI systems need architectural mechanisms to question whether an objective should be optimized at all — not just optimization toward under-specified goals. ([arXiv:2606.16319](https://arxiv.org/abs/2606.16319v1))
+- **Library-Aware Doubles and Iterative Repair**: Automated unit-test authoring workflow for LLM-generated tests in firmware — library-aware test generation with iterative repair. ([arXiv:2606.19725](https://arxiv.org/abs/2606.19725v1))
 
 ---
 
 ## Chinese Community / 中文社区
 
-> 注：今日 X 采集失败（登录过期），中文内容来自知乎、搜狐、腾讯云等技术社区的网页搜索。/ Today's Chinese section is from web search of Zhihu, Sohu, Tencent Cloud, etc., since X collection failed.
+> Today's Chinese content is from Zhihu web search, covering agent architecture trends and framework analyses.
 
-- **国产模型登上编程 Agent 榜单**：DeepSeek V4 Pro、Kimi K2.6、GLM-5.1 全部进入实测排行榜，以 Claude Code 为框架底座，在真实软件工程任务上展现出实战级能力 —— 说明模型可换，但 harness 才是护城河。([搜狐](https://www.sohu.com/a/1031393624_121124376))
+- **国产模型登上编程 Agent 榜单**: DeepSeek V4 Pro、Kimi K2.6、GLM-5.1 全部进入实测排行榜，以 Claude Code 为框架底座 —— 模型可换，但 harness 才是护城河。
 
-- **Claude Code Dynamic Workflows 实测稳定**：大型重构（多文件迁移、批量测试修复、跨模块重命名）已可自动拆分并行；与 Auto mode 组合后解决"频繁确认"和"单 agent 瓶颈"。社区反馈并行上限在 10-20 个 agent 内稳定，超过 30 个协调开销明显上升。配合 Opus 4.8 默认模型和 fast mode，Claude Code 定位从"终端 Agent"变为"可编排的软件工程环境"。([LearnAgent](https://learnagent.org/library/compare/ai-coding-agents-2026-mid-year/))
+- **2026 年 AI Agent 技术全景**: 12 大主流框架深度解析，现代 Agent 标准架构包含感知→决策→行动→记忆完整闭环。([知乎专栏](https://zhuanlan.zhihu.com/p/2026254728342905724))
 
-- **Claude Code 自定义 Agent 实战**：把重复指令固化为一个 Markdown 文件（定义 system prompt、工具权限、模型选择），之后一句话即可调用专属智能体 —— 这是 skill 化趋势在中文社区的落地。([腾讯云开发者社区](https://cloud.tencent.com/developer/article/2657591))
+- **AI Agent 完整工作流全景解析**: 深度拆解 Agent 的感知、规划、记忆与行动闭环，结合 Gartner 与 McKinsey 数据，提供可落地的架构指南。([知乎专栏](https://zhuanlan.zhihu.com/p/1996954141231190461))
 
-- **AI Coding 工具红黑榜**：Claude Code Skills 实战——把"博客发布前自检"等重复流程写成 Skill，配合 `context: fork` 不污染主对话。这是 skills-as-software 在个人工作流中的真实应用。([陈广亮技术博客](https://chenguangliang.com/posts/blog149_ai-coding-tools-2026-review/))
+- **15 篇 AI Agent 研报**: 架构向「云原生+Agent 协同」重构，支持多 Agent 协同与微秒级推理。([知乎专栏](https://zhuanlan.zhihu.com/p/1996902325206405568))
 
-- **2026 年 AI Agent 技术全景**：12 大主流框架深度解析与架构演进趋势，涵盖核心架构、框架选型与未来方向。([知乎专栏](https://zhuanlan.zhihu.com/p/2026254728342905724))
+- **2026：Agent 之年**: 智能系统实现真正的多模态理解与执行，Zero-trust 安全架构强调每一步操作的验证与监控。([知乎专栏](https://zhuanlan.zhihu.com/p/2005591914448193177))
 
-- **ICML 2026 LLM×Graph 论文总结**：Graph4LLM、Graph4Agent、智能体记忆（Memory）、AgenticRL、RAG 方向的论文整理 —— 图结构与 agent 记忆的结合是新趋势。([知乎专栏](https://zhuanlan.zhihu.com/p/2039861022064907854))
+- **LangGraph 成为生产级 Agent 运行时事实标准**: LangChain 发布 Deep Agents（基于 LangGraph 的超级 Agent Harness），与 NVIDIA 合作。发现 LangChain/LangGraph 路径遍历和 SQL 注入漏洞。([知乎专栏](https://zhuanlan.zhihu.com/p/2021064941650679235))
+
+- **Hermes 智能体研究报告**: Hermes Agent 由 Nous Research 开发的开源自主 AI 智能体，2026年2月正式发布，与 OpenClaw 对比分析。([知乎专栏](https://zhuanlan.zhihu.com/p/2026622473097978502))
+
+- **Agentic AI 十大关键趋势**: 系统架构从单体应用向分布式智能体网络演进，IBM 预测将出现 Agent 控制平面和多 Agent 仪表盘。([知乎专栏](https://zhuanlan.zhihu.com/p/1991451643544355292))
 
 ---
 
-*Collected 2026-06-22 via web search, arXiv search, and Chinese-community search. X/Twitter "For You" feed unavailable (session expired). Tomorrow's run will retry X collection.*
+*Collected via X web search, arXiv API, and Zhihu web search. X "For You" feed was unavailable (session auth gap) — X items come from keyword and company-account web search instead. Full candidate archive saved locally.*
